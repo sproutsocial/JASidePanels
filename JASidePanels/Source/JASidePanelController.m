@@ -319,6 +319,9 @@ static char ja_kvoContext;
     } else if (self.pushesSidePanels && !self.centerPanelHidden) {
         leftFrame.origin.x = self.centerPanelContainer.frame.origin.x - self.leftVisibleWidth;
         rightFrame.origin.x = self.centerPanelContainer.frame.origin.x + self.centerPanelContainer.frame.size.width;
+    } else {
+	leftFrame.size.width *= self.leftGapPercentage;
+	rightFrame.size.width *= self.rightGapPercentage;
     }
     self.leftPanelContainer.frame = leftFrame;
     self.rightPanelContainer.frame = rightFrame;
@@ -872,10 +875,13 @@ static char ja_kvoContext;
     [self _adjustCenterFrame];
     
     if (animated) {
+	[self.leftPanel viewWillDisappear:animated]; // sprout
         [self _animateCenterPanel:shouldBounce completion:^(__unused BOOL finished) {
             self.leftPanelContainer.hidden = YES;
             self.rightPanelContainer.hidden = YES;
             [self _unloadPanels];
+	    // sprout
+	    [self.leftPanel viewDidDisappear:animated];
         }];
     } else {
         self.centerPanelContainer.frame = _centerPanelRestingFrame;	
